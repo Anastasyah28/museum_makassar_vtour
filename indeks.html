@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Virtual Tour 360° - Museum Kota Makassar</title>
+
+    <!-- Library untuk menampilkan panorama 360 derajat -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f2f5f7;
+            color: #243746;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #102e35, #1b5158);
+            color: white;
+            text-align: center;
+            padding: 28px 16px;
+        }
+
+        .header h1 {
+            font-size: clamp(25px, 4vw, 34px);
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #d8e9e9;
+        }
+
+        /* Konten utama */
+        .container {
+            width: min(100% - 32px, 1050px);
+            margin: 28px auto 40px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .intro h2 {
+            font-size: clamp(21px, 3vw, 27px);
+            color: #17464d;
+            margin-bottom: 7px;
+        }
+
+        .intro p {
+            color: #65747b;
+            font-size: 14px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Area panorama */
+        .viewer-card {
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(22, 47, 55, 0.10);
+            border: 1px solid #e1e8eb;
+        }
+
+        #panorama {
+            width: 100%;
+            height: clamp(280px, 53vw, 490px);
+            border-radius: 9px;
+            overflow: hidden;
+            background: #dce5e8;
+        }
+
+        .photo-caption {
+            text-align: center;
+            padding: 12px 5px 3px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #244d53;
+        }
+
+        /* Navigasi di bawah foto */
+        .navigation {
+            margin-top: 25px;
+        }
+
+        .navigation h3 {
+            text-align: center;
+            font-size: 19px;
+            color: #244d53;
+            margin-bottom: 14px;
+        }
+
+        .location-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .location-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 64px;
+            padding: 12px 10px;
+            border: 2px solid #d5e3e5;
+            border-radius: 10px;
+            background: white;
+            color: #24464c;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: inherit;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s,
+                        border-color 0.2s, transform 0.2s;
+        }
+
+        .location-button:hover {
+            background: #eaf4f4;
+            border-color: #347780;
+            transform: translateY(-2px);
+        }
+
+        .location-button.active {
+            background: #174b53;
+            border-color: #174b53;
+            color: white;
+        }
+
+        .location-button:focus-visible {
+            outline: 3px solid #e3ad53;
+            outline-offset: 3px;
+        }
+
+        .instruction {
+            text-align: center;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #65747b;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 18px 12px;
+            background: #102e35;
+            color: #d8e9e9;
+            font-size: 13px;
+        }
+
+        /* Tampilan HP */
+        @media (max-width: 650px) {
+            .header {
+                padding: 23px 12px;
+            }
+
+            .container {
+                width: calc(100% - 22px);
+                margin-top: 20px;
+            }
+
+            .viewer-card {
+                padding: 8px;
+            }
+
+            #panorama {
+                height: 320px;
+            }
+
+            .location-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+
+            .location-button {
+                min-height: 60px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>Virtual Tour 360°</h1>
+        <p>Museum Kota Makassar</p>
+    </header>
+
+    <main class="container">
+
+        <section class="intro">
+            <h2>Jelajahi Museum Kota Makassar</h2>
+            <p>
+                Jelajahi berbagai sudut Museum Kota Makassar melalui
+                panorama 360°. Geser gambar menggunakan mouse atau
+                sentuhan layar untuk melihat lingkungan sekitar.
+                Pilih lokasi di bawah foto untuk berpindah tempat.
+            </p>
+        </section>
+
+        <section class="viewer-card">
+            <div
+                id="panorama"
+                role="img"
+                aria-label="Panorama 360 derajat Museum Kota Makassar"
+            ></div>
+
+            <div class="photo-caption" id="photoCaption">
+                Gerbang Museum
+            </div>
+        </section>
+
+        <section class="navigation">
+            <h3>Pilih Lokasi Museum</h3>
+
+            <div class="location-grid">
+                <button
+                    type="button"
+                    class="location-button active"
+                    data-index="0"
+                    aria-pressed="true"
+                >
+                    Gerbang Museum
+                </button>
+
+                <button
+                    type="button"
+                    class="location-button"
+                    data-index="1"
+                    aria-pressed="false"
+                >
+                    Pintu Masuk Museum
+                </button>
+
+                <button
+                    type="button"
+                    class="location-button"
+                    data-index="2"
+                    aria-pressed="false"
+                >
+                    Lobi Museum
+                </button>
+
+                <button
+                    type="button"
+                    class="location-button"
+                    data-index="3"
+                    aria-pressed="false"
+                >
+                    Ruangan 1 Museum
+                </button>
+            </div>
+
+            <p class="instruction">
+                Pilih salah satu tombol di atas untuk berpindah lokasi.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        Virtual Tour 360° &copy; 2026 — Museum Kota Makassar
+    </footer>
+
+    <script>
+        // Nama file harus sama dengan nama file di folder assets.
+        const locations = [
+            {
+                name: "Gerbang Museum",
+                image: "assets/gerbang museum.jpeg"
+            },
+            {
+                name: "Pintu Masuk Museum",
+                image: "assets/pintu masuk museum.jpeg"
+            },
+            {
+                name: "Lobi Museum",
+                image: "assets/loby museum.jpeg"
+            },
+            {
+                name: "Ruangan 1 Museum",
+                image: "assets/ruangan1.jpeg"
+            }
+        ];
+
+        let viewer = null;
+
+        const caption = document.getElementById("photoCaption");
+        const buttons = document.querySelectorAll(".location-button");
+
+        function showLocation(index) {
+            const location = locations[index];
+
+            if (!location) return;
+
+            caption.textContent = location.name;
+
+            buttons.forEach((button, buttonIndex) => {
+                const selected = buttonIndex === index;
+
+                button.classList.toggle("active", selected);
+                button.setAttribute("aria-pressed", String(selected));
+            });
+
+            // Hapus panorama sebelumnya sebelum memuat lokasi baru.
+            if (viewer) {
+                viewer.destroy();
+                viewer = null;
+            }
+
+            document.getElementById("panorama").innerHTML = "";
+
+            viewer = pannellum.viewer("panorama", {
+                type: "equirectangular",
+                panorama: encodeURI(location.image),
+                autoLoad: true,
+                showControls: true,
+                showZoomCtrl: true,
+                showFullscreenCtrl: true,
+                showPanoramaName: false,
+                mouseZoom: true,
+                draggable: true,
+                compass: false,
+                hotSpots: [],
+                hfov: 100,
+                minHfov: 50,
+                maxHfov: 120
+            });
+        }
+
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                showLocation(Number(button.dataset.index));
+            });
+        });
+
+        // Lokasi pertama ditampilkan saat halaman dibuka.
+        showLocation(0);
+    </script>
+
+</body>
+</html>
